@@ -1,0 +1,5 @@
+- [ ] Install TypeScript as dev dependency
+- [ ] Create tsconfig.json with React and Vite settings
+- [ ] Rename src/App.jsx to src/App.tsx
+- [ ] Rename src/main.jsx to src/main.tsx
+- [ ] Test the project by running dev server
