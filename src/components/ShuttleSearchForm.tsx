@@ -60,41 +60,16 @@ const ShuttleSearchForm: React.FC<ShuttleSearchFormProps> = ({ onSearch, onFormV
     },
   });
 
-  const originValue = watch('origin');
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    const savedData = localStorage.getItem('shuttleSearchForm');
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        setValue('name', parsed.name || '');
-        setValue('origin', parsed.origin || '');
-        setValue('destination', parsed.destination || '');
-        setValue('departureDate', parsed.departureDate || '');
-      } catch (e) {
-        console.error('Error loading from localStorage', e);
-      }
-    }
-  }, [setValue]);
+  const originValue = watch('origin')
 
   // Save to localStorage and store on change
   useEffect(() => {
     const subscription = watch((data) => {
-      localStorage.setItem('shuttleSearchForm', JSON.stringify(data));
       setFormData(data);
     });
     return () => subscription.unsubscribe();
   }, [watch, setFormData]);
 
-  // Clear localStorage on page unload
-  useEffect(() => {
-    const handleUnload = () => {
-      localStorage.removeItem('shuttleSearchForm');
-    };
-    window.addEventListener('beforeunload', handleUnload);
-    return () => window.removeEventListener('beforeunload', handleUnload);
-  }, []);
 
   // Notify parent about form validity changes
   useEffect(() => {

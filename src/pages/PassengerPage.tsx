@@ -20,10 +20,10 @@ const PassengerPage: React.FC = () => {
   const { filteredShuttles, searchCriteria, setShuttles, search, resetSearch } = useShuttleStore();
   const [selectedShuttle, setSelectedShuttle] = useState<Shuttle | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>('');
-  const [bookingStatus, setBookingStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const formData = useShuttleStore(state => state.formData);
   const setFormData = useShuttleStore(state => state.setFormData);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState<boolean>(false);
 
   useEffect(() => {
     if (data?.schedules) {
@@ -44,29 +44,28 @@ const PassengerPage: React.FC = () => {
   const handleSelect = (shuttle: Shuttle, time: string) => {
     setSelectedShuttle(shuttle);
     setSelectedTime(time);
-    // Save form data + shuttle ID to localStorage
-    const formData = localStorage.getItem('passengerFormData');
-    if (formData) {
-      const data = JSON.parse(formData);
-      localStorage.setItem('passengerData', JSON.stringify({ ...data, shuttleId: shuttle.id, time }));
-    }
   };
 
-  const handleConfirmBooking = async () => {
-    setBookingStatus('loading');
-    // Simulate loading state 800-1200ms
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setBookingStatus('success');
-    // Reset form and selections after booking
-    resetSearch();
-    setSelectedShuttle(null);
-    setSelectedTime('');
+  const handleConfirmBooking = () => {
+    if (selectedShuttle && selectedTime && formData) {
+      const booking = {
+        id: Date.now().toString(),
+        shuttle: selectedShuttle,
+        time: selectedTime,
+        passenger: formData,
+        confirmedAt: new Date().toISOString(),
+      };
+      const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      existingBookings.push(booking);
+      localStorage.setItem('bookings', JSON.stringify(existingBookings));
+      setShowSuccessDialog(true);
+    }
+    handleCloseDialog();
   };
 
   const handleCloseDialog = () => {
     setSelectedShuttle(null);
     setSelectedTime('');
-    setBookingStatus('idle');
   };
 
   if (error) return <div>Failed to load data</div>;
@@ -74,7 +73,12 @@ const PassengerPage: React.FC = () => {
   return (
     <div className="App min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Passenger Page</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">Passenger Page</h1>
+          <Button variant="outlined" onClick={() => navigate('/bookings')}>
+            Lihat Booking
+          </Button>
+        </div>
         <ShuttleSearchForm onSearch={handleSearch} onFormValidChange={setIsFormValid} />
         {searchCriteria && isFormValid && (
           <ShuttleList
@@ -85,7 +89,7 @@ const PassengerPage: React.FC = () => {
             onReset={resetSearch}
           />
         )}
-        <Dialog open={!!selectedShuttle && !!selectedTime && bookingStatus !== 'success'} onClose={handleCloseDialog}>
+        <Dialog open={!!selectedShuttle && !!selectedTime} onClose={handleCloseDialog}>
           <DialogTitle>Ringkasan Pemesanan</DialogTitle>
           <DialogContent>
             <Box sx={{ mb: 2 }}>
@@ -98,21 +102,22 @@ const PassengerPage: React.FC = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseDialog}>Batal</Button>
-            <Button onClick={handleConfirmBooking} variant="contained" disabled={bookingStatus === 'loading'}>
-              {bookingStatus === 'loading' ? 'Memproses...' : 'Konfirmasi Booking'}
+            <Button onClick={handleConfirmBooking} variant="contained">
+              Konfirmasi Booking
             </Button>
           </DialogActions>
         </Dialog>
-
-        <Dialog open={bookingStatus === 'success'} onClose={() => navigate('/')}>
-          <DialogContent sx={{ textAlign: 'center', py: 4 }}>
-            <Typography variant="h6" color="primary">
-              Terima kasih, booking Anda berhasil!
-            </Typography>
-            <Button variant="contained" onClick={() => navigate('/')} sx={{ mt: 2 }}>
-              Kembali ke Beranda
-            </Button>
+        <Dialog open={showSuccessDialog} onClose={() => setShowSuccessDialog(false)}>
+          <DialogTitle>Booking Berhasil</DialogTitle>
+          <DialogContent>
+            <Typography>Booking Anda telah dikonfirmasi.</Typography>
           </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowSuccessDialog(false)}>Tutup</Button>
+            <Button onClick={() => { setShowSuccessDialog(false); navigate('/bookings'); }} variant="contained">
+              Lihat Booking
+            </Button>
+          </DialogActions>
         </Dialog>
       </div>
     </div>
