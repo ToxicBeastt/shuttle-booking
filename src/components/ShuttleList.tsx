@@ -18,6 +18,7 @@ import {
 interface ShuttleCardProps {
   shuttle: Shuttle;
   onSelect: (shuttle: Shuttle, time: string) => void;
+  disabled?: boolean;
 }
 
 interface ShuttleListProps {
@@ -26,6 +27,7 @@ interface ShuttleListProps {
   isLoading: boolean;
   searchCriteria?: SearchCriteria;
   onReset?: () => void;
+  disabled?: boolean;
 }
 
 const LoadingSkeleton: React.FC = () => (
@@ -73,7 +75,7 @@ const EmptyState: React.FC = () => (
   </Box>
 );
 
-const ShuttleRow: React.FC<ShuttleCardProps> = ({ shuttle, onSelect }) => {
+const ShuttleRow: React.FC<ShuttleCardProps> = ({ shuttle, onSelect, disabled }) => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const handleTimeSelect = (time: string) => {
@@ -105,7 +107,7 @@ const ShuttleRow: React.FC<ShuttleCardProps> = ({ shuttle, onSelect }) => {
             <Button
               key={`${shuttle.id}-${time}`}
               onClick={() => handleTimeSelect(time)}
-              disabled={selectedTime === time}
+              disabled={disabled || selectedTime === time}
               variant={selectedTime === time ? 'contained' : 'outlined'}
               size="small"
               aria-label={`Pilih shuttle ${shuttle.operator} jam ${time}`}

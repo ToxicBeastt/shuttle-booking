@@ -20,16 +20,25 @@ export interface SearchCriteria {
   date?: string;
 }
 
+export interface FormData {
+  name?: string;
+  origin?: string;
+  destination?: string;
+  departureDate?: string;
+}
+
 interface ShuttleState {
   shuttles: Shuttle[];
   searchCriteria: SearchCriteria | null;
   filteredShuttles: Shuttle[];
   isLoading: boolean;
   error: any;
+  formData: FormData | null;
   setShuttles: (shuttles: Shuttle[]) => void;
   setSearchCriteria: (criteria: SearchCriteria | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: any) => void;
+  setFormData: (formData: FormData | null) => void;
   search: (criteria: SearchCriteria) => void;
   resetSearch: () => void;
 }
@@ -40,6 +49,7 @@ export const useShuttleStore = create<ShuttleState>((set, get) => ({
   filteredShuttles: [],
   isLoading: false,
   error: null,
+  formData: null,
   setShuttles: (shuttles) => {
     set({ shuttles });
     const { searchCriteria } = get();
@@ -63,6 +73,7 @@ export const useShuttleStore = create<ShuttleState>((set, get) => ({
   setSearchCriteria: (criteria) => set({ searchCriteria: criteria }),
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
+  setFormData: (formData) => set({ formData }),
   search: (criteria) => {
     const { shuttles } = get();
     const filtered = shuttles.filter(shuttle => {
