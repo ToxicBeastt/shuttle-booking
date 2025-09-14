@@ -3,6 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useShuttleStore } from '../stores/shuttleStore';
+import { useTranslation } from 'react-i18next';
 import {
   TextField,
   FormControl,
@@ -17,20 +18,9 @@ import {
 
 const cities = ['Jakarta', 'Bandung', 'Surabaya'];
 
-const formSchema = z.object({
-  name: z.string().min(1, 'Nama wajib diisi'),
-  origin: z.string().min(1, 'Kota asal wajib dipilih'),
-  destination: z.string().min(1, 'Kota tujuan wajib dipilih'),
-  departureDate: z.string().min(1, 'Tanggal berangkat wajib dipilih'),
-}).refine((data) => {
-  if (data.origin && data.destination && data.origin === data.destination) {
-    return false;
-  }
-  return true;
-}, {
-  message: 'Kota asal dan tujuan tidak boleh sama',
-  path: ['destination'],
-});
+import { shuttleSearchSchema } from '../utils/validation';
+
+const formSchema = shuttleSearchSchema;
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -40,6 +30,7 @@ interface ShuttleSearchFormProps {
 }
 
 const ShuttleSearchForm: React.FC<ShuttleSearchFormProps> = ({ onSearch, onFormValidChange }) => {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const setFormData = useShuttleStore(state => state.setFormData);
 
@@ -90,7 +81,7 @@ const ShuttleSearchForm: React.FC<ShuttleSearchFormProps> = ({ onSearch, onFormV
   return (
     <Paper sx={{ p: 3, mb: 3 }} role="search">
       <Typography variant="h5" component="h2" gutterBottom>
-        Form Pencarian Shuttle
+        {t('searchFormTitle')}
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit(submitForm)} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -101,7 +92,7 @@ const ShuttleSearchForm: React.FC<ShuttleSearchFormProps> = ({ onSearch, onFormV
           render={({ field }) => (
             <TextField
               {...field}
-              label="Nama Penumpang *"
+              label={t('passengerNameLabel')}
               error={!!errors.name}
               helperText={errors.name?.message}
               fullWidth
@@ -116,10 +107,10 @@ const ShuttleSearchForm: React.FC<ShuttleSearchFormProps> = ({ onSearch, onFormV
             control={control}
             render={({ field }) => (
               <FormControl fullWidth sx={{ minWidth: 120 }}>
-                <InputLabel>Kota Asal *</InputLabel>
+                <InputLabel>{t('originLabel')}</InputLabel>
                 <Select {...field} error={!!errors.origin}>
                   <MenuItem value="">
-                    <em>Pilih kota asal</em>
+                    <em>{t('selectOrigin')}</em>
                   </MenuItem>
                   {cities.map((city) => (
                     <MenuItem key={city} value={city}>
@@ -137,10 +128,10 @@ const ShuttleSearchForm: React.FC<ShuttleSearchFormProps> = ({ onSearch, onFormV
             control={control}
             render={({ field }) => (
               <FormControl fullWidth sx={{ minWidth: 120 }}>
-                <InputLabel>Kota Tujuan *</InputLabel>
+                <InputLabel>{t('destinationLabel')}</InputLabel>
                 <Select {...field} error={!!errors.destination}>
                   <MenuItem value="">
-                    <em>Pilih kota tujuan</em>
+                    <em>{t('selectDestination')}</em>
                   </MenuItem>
                   {cities
                     .filter((city) => city !== originValue)
@@ -163,7 +154,7 @@ const ShuttleSearchForm: React.FC<ShuttleSearchFormProps> = ({ onSearch, onFormV
           render={({ field }) => (
             <TextField
               {...field}
-              label="Tanggal Berangkat *"
+              label={t('departureDateLabel')}
               type="date"
               InputLabelProps={{ shrink: true }}
               error={!!errors.departureDate}
@@ -181,7 +172,7 @@ const ShuttleSearchForm: React.FC<ShuttleSearchFormProps> = ({ onSearch, onFormV
             disabled={!isValid || isSubmitting}
             fullWidth
           >
-            {isSubmitting ? 'Mencari...' : 'Cari Shuttle'}
+            {isSubmitting ? t('searching') : t('searchShuttle')}
           </Button>
         </Box>
       </Box>

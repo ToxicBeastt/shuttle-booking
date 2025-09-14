@@ -9,10 +9,9 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Box,
-  Button,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface Booking {
   id: string;
@@ -38,6 +37,7 @@ interface Booking {
 const BookingsPage: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const storedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
@@ -45,50 +45,47 @@ const BookingsPage: React.FC = () => {
   }, []);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Daftar Booking
-      </Typography>
-      {bookings.length === 0 ? (
-        <Typography variant="body1">Belum ada booking yang dikonfirmasi.</Typography>
-      ) : (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="bookings table">
-            <TableHead>
-              <TableRow>
-                <TableCell>No</TableCell>
-                <TableCell>Operator</TableCell>
-                <TableCell>Nama Penumpang</TableCell>
-                <TableCell>Rute</TableCell>
-                <TableCell>Tanggal</TableCell>
-                <TableCell>Jam</TableCell>
-                <TableCell>Harga</TableCell>
-                <TableCell>Dikonfirmasi Pada</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {bookings.map((booking, index) => (
-                <TableRow key={booking.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{booking.shuttle.operator}</TableCell>
-                  <TableCell>{booking.passenger.name || 'N/A'}</TableCell>
-                  <TableCell>{booking.shuttle.origin} → {booking.shuttle.destination}</TableCell>
-                  <TableCell>{booking.shuttle.date}</TableCell>
-                  <TableCell>{booking.time}</TableCell>
-                  <TableCell>Rp{booking.shuttle.price.toLocaleString()}</TableCell>
-                  <TableCell>{new Date(booking.confirmedAt).toLocaleString()}</TableCell>
+    <div className="py-8">
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          {t('bookingList')}
+        </Typography>
+        {bookings.length === 0 ? (
+          <Typography variant="body1">{t('noBookingsConfirmed')}</Typography>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label={t('bookingsTable')}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>{t('no')}</TableCell>
+                  <TableCell>{t('operator')}</TableCell>
+                  <TableCell>{t('passengerName')}</TableCell>
+                  <TableCell>{t('routeLabel')}</TableCell>
+                  <TableCell>{t('date')}</TableCell>
+                  <TableCell>{t('time')}</TableCell>
+                  <TableCell>{t('price')}</TableCell>
+                  <TableCell>{t('confirmedAt')}</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-      <Box sx={{ mt: 4 }}>
-        <Button variant="contained" onClick={() => navigate('/')}>
-          Kembali ke Pencarian
-        </Button>
-      </Box>
-    </Container>
+              </TableHead>
+              <TableBody>
+                {bookings.map((booking, index) => (
+                  <TableRow key={booking.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{booking.shuttle.operator}</TableCell>
+                    <TableCell>{booking.passenger.name || 'N/A'}</TableCell>
+                    <TableCell>{booking.shuttle.origin} → {booking.shuttle.destination}</TableCell>
+                    <TableCell>{booking.shuttle.date}</TableCell>
+                    <TableCell>{booking.time}</TableCell>
+                    <TableCell>Rp{booking.shuttle.price.toLocaleString()}</TableCell>
+                    <TableCell>{new Date(booking.confirmedAt).toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </Container>
+    </div>
   );
 };
 

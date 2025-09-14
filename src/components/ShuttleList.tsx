@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { formatCurrency } from '../utils/formatters';
 import { Shuttle, SearchCriteria } from '../stores/shuttleStore';
+import { useTranslation } from 'react-i18next';
 import {
   Table,
   TableBody,
@@ -30,50 +31,57 @@ interface ShuttleListProps {
   disabled?: boolean;
 }
 
-const LoadingSkeleton: React.FC = () => (
-  <TableContainer component={Paper}>
-    <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Operator</TableCell>
-                  <TableCell>Rute</TableCell>
-                  <TableCell>Tanggal</TableCell>
-                  <TableCell>Harga</TableCell>
-                  <TableCell>Jadwal Keberangkatan</TableCell>
-                </TableRow>
-              </TableHead>
-      <TableBody>
-        {[1, 2, 3].map((i) => (
-          <TableRow key={i}>
-            <TableCell><Skeleton width={80} /></TableCell>
-            <TableCell><Skeleton width={100} /></TableCell>
-            <TableCell><Skeleton width={80} /></TableCell>
-            <TableCell><Skeleton width={60} /></TableCell>
-            <TableCell>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Skeleton width={40} height={30} />
-                <Skeleton width={40} height={30} />
-              </Box>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </TableContainer>
-);
+const LoadingSkeleton: React.FC = () => {
+  const { t } = useTranslation();
 
-const EmptyState: React.FC = () => (
-  <Box sx={{ textAlign: 'center', py: 6 }}>
-    <Typography variant="h1" sx={{ mb: 2 }}>🚌</Typography>
-    <Typography variant="h6" color="text.secondary" gutterBottom>
-      Tidak ada shuttle tersedia
-    </Typography>
-    <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400, mx: 'auto' }}>
-      Maaf, tidak ada shuttle yang tersedia untuk rute dan tanggal yang dipilih.
-      Silakan coba dengan kriteria pencarian yang berbeda.
-    </Typography>
-  </Box>
-);
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>{t('operator')}</TableCell>
+                    <TableCell>{t('routeLabel')}</TableCell>
+                    <TableCell>{t('date')}</TableCell>
+                    <TableCell>{t('price')}</TableCell>
+                    <TableCell>{t('departureSchedule')}</TableCell>
+                  </TableRow>
+                </TableHead>
+        <TableBody>
+          {[1, 2, 3].map((i) => (
+            <TableRow key={i}>
+              <TableCell><Skeleton width={80} /></TableCell>
+              <TableCell><Skeleton width={100} /></TableCell>
+              <TableCell><Skeleton width={80} /></TableCell>
+              <TableCell><Skeleton width={60} /></TableCell>
+              <TableCell>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Skeleton width={40} height={30} />
+                  <Skeleton width={40} height={30} />
+                </Box>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+const EmptyState: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <Box sx={{ textAlign: 'center', py: 6 }}>
+      <Typography variant="h1" sx={{ mb: 2 }}>🚌</Typography>
+      <Typography variant="h6" color="text.secondary" gutterBottom>
+        {t('noShuttlesAvailable')}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400, mx: 'auto' }}>
+        {t('noShuttlesMessage')}
+      </Typography>
+    </Box>
+  );
+};
 
 const ShuttleRow: React.FC<ShuttleCardProps> = ({ shuttle, onSelect, disabled }) => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -131,11 +139,13 @@ const ShuttleList: React.FC<ShuttleListProps> = ({
   searchCriteria,
   onReset,
 }) => {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return (
       <Paper sx={{ p: 3, mb: 3, backgroundColor: '#f9f9f9' }} aria-live="polite">
         <Typography variant="h5" component="h3" gutterBottom>
-          Mencari Shuttle...
+          {t('searchingShuttle')}
         </Typography>
         <LoadingSkeleton />
       </Paper>
@@ -146,11 +156,11 @@ const ShuttleList: React.FC<ShuttleListProps> = ({
     <Paper
       sx={{ p: 3, mb: 3, backgroundColor: '#f9f9f9' }}
       role="region"
-      aria-label="Daftar shuttle tersedia"
+      aria-label={t('availableShuttles')}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h5" component="h3">
-          {searchCriteria ? 'Daftar Shuttle Tersedia' : 'Shuttle Tersedia'}
+          {searchCriteria ? t('availableShuttles') : t('shuttlesAvailable')}
         </Typography>
         {searchCriteria && (
           <Typography variant="body2" color="text.secondary">
@@ -164,17 +174,17 @@ const ShuttleList: React.FC<ShuttleListProps> = ({
       ) : (
         <>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }} role="status">
-            Ditemukan {shuttles.length} shuttle untuk rute yang dipilih
+            {t('shuttlesFound', { count: shuttles.length })}
           </Typography>
           <TableContainer component={Paper} elevation={1}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Operator</TableCell>
-                  <TableCell>Rute</TableCell>
-                  <TableCell>Tanggal</TableCell>
-                  <TableCell>Harga</TableCell>
-                  <TableCell>Jadwal Keberangkatan</TableCell>
+                  <TableCell>{t('operator')}</TableCell>
+                  <TableCell>{t('routeLabel')}</TableCell>
+                  <TableCell>{t('date')}</TableCell>
+                  <TableCell>{t('price')}</TableCell>
+                  <TableCell>{t('departureSchedule')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
