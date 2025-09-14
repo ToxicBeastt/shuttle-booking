@@ -1,12 +1,16 @@
 import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import SearchPage from './pages/SearchPage';
 
 function App() {
   return (
-    <div className="App">
-      <h1>Shuttle Booking App</h1>
-      <p>Welcome to the shuttle booking service!</p>
-    </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<SearchPage />} />
+        
+      </Routes>
+    </Router>
+  );
 }
 
 export default App

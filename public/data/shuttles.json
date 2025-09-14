@@ -6,7 +6,8 @@
       "origin": "Jakarta",
       "destination": "Bandung",
       "departures": ["08:00", "13:00", "19:00"],
-      "price": 120000
+      "price": 120000,
+      "date": "2025-09-01"
     },
     {
       "id": "BDG-SBY-0900-TravelX",
@@ -14,7 +15,8 @@
       "origin": "Bandung",
       "destination": "Surabaya",
       "departures": ["09:00", "15:00"],
-      "price": 180000
+      "price": 180000,
+      "date": "2025-09-02"
     },
     {
       "id": "JKT-SBY-0700-CityTrans",
@@ -22,7 +24,53 @@
       "origin": "Jakarta",
       "destination": "Surabaya",
       "departures": ["07:00", "12:00", "18:00"],
-      "price": 200000
+      "price": 200000,
+      "date": "2025-09-03"
+    },
+    {
+      "id": "JKT-BDG-0800-Blue-2",
+      "operator": "Blue Shuttle",
+      "origin": "Jakarta",
+      "destination": "Bandung",
+      "departures": ["08:00", "13:00", "19:00"],
+      "price": 120000,
+      "date": "2025-09-02"
+    },
+    {
+      "id": "BDG-JKT-1000-TravelX",
+      "operator": "TravelX",
+      "origin": "Bandung",
+      "destination": "Jakarta",
+      "departures": ["10:00", "16:00"],
+      "price": 120000,
+      "date": "2025-09-01"
+    },
+    {
+      "id": "SBY-JKT-1100-CityTrans",
+      "operator": "CityTrans",
+      "origin": "Surabaya",
+      "destination": "Jakarta",
+      "departures": ["11:00", "17:00"],
+      "price": 200000,
+      "date": "2025-09-03"
+    },
+    {
+      "id": "JKT-BDG-1400-Blue",
+      "operator": "Blue Shuttle",
+      "origin": "Jakarta",
+      "destination": "Bandung",
+      "departures": ["14:00", "20:00"],
+      "price": 130000,
+      "date": "2025-09-04"
+    },
+    {
+      "id": "BDG-SBY-1600-TravelX",
+      "operator": "TravelX",
+      "origin": "Bandung",
+      "destination": "Surabaya",
+      "departures": ["16:00", "22:00"],
+      "price": 190000,
+      "date": "2025-09-04"
     }
   ]
 }
